@@ -2,6 +2,9 @@ package com.cryptopaygo.config.entity;
 
 import com.cryptopaygo.config.enums.Role;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -26,6 +29,12 @@ public class User implements UserDetails {
     @Enumerated
     private Role role;
 
+    public User(@NotBlank @NotNull String name, @NotBlank @NotNull @Email String email, @NotBlank @NotNull String password, Role role) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
