@@ -10,7 +10,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-
 import java.io.IOException;
 
 @Component
@@ -26,17 +25,20 @@ public class SecurityFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+
         var tokenJwt = recoverToken(request);
+        System.out.println("Token JWT recuperado: " + tokenJwt);
 
         if (tokenJwt != null) {
             var userName = tokenService.validateToken(tokenJwt);
+            System.out.println("Nome de usuário extraído do token: " + userName);
             var user = userRepository.findByEmail(userName);
-
-            if (!user.isPresent()) {
+            if (user.isEmpty()) {
                 throw new RuntimeException("User not found");
             }
+            System.out.println("Usuário encontrado: " + user.get());
 
-            var authentication = new UsernamePasswordAuthenticationToken(user.get(), null, user.get().getAuthorities());
+            var authentication = new UsernamePasswordAuthenticationToken(user.get().getEmail(), null, user.get().getAuthorities());
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
