@@ -20,12 +20,12 @@ public class TokenService {
     public String generateToken(String userName){
         try {
 
-            var algoritm = Algorithm.HMAC256(secret);
+            var algorithm = Algorithm.HMAC256(secret);
             return JWT.create()
                     .withIssuer("Crypto Pay Go")
                     .withSubject(userName)
                     .withExpiresAt(expirationDate())
-                    .sign(algoritm);
+                    .sign(algorithm);
 
         }catch (JWTCreationException exception){
 
@@ -36,9 +36,8 @@ public class TokenService {
 
     public String validateToken(String tokenJWT){
         try{
-            var algoritm = Algorithm.HMAC256(secret);
-            System.out.println(algoritm);
-            return JWT.require(algoritm)
+            var algorithm = Algorithm.HMAC256(secret);
+            return JWT.require(algorithm)
                     .withIssuer("Crypto Pay Go")
                     .build()
                     .verify(tokenJWT)
