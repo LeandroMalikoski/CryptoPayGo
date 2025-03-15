@@ -17,7 +17,7 @@ public enum Role {
 
     public static Role fromString(String name) {
         return Arrays.stream(Role.values())
-                .filter(role -> role.getName().equalsIgnoreCase(name))
+                .filter(role -> role.name().equalsIgnoreCase(name))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("No constant with name %s found in Role".formatted(name)));
     }
