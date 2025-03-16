@@ -5,12 +5,21 @@ import com.cryptopaygo.config.exception.UserNotFoundException;
 import com.cryptopaygo.dto.ErrorResponseDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
+
+    // Tratar exceção quando login falhar
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ErrorResponseDTO> handleBadCredentials() {
+        // Retorna uma resposta com status 401 (UNAUTHORIZED) e a mensagem de erro
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new ErrorResponseDTO("Non-existent user or invalid password", false));
+    }
 
     // Tratar exceção quando o Usuário não for encontrado
     @ExceptionHandler(UserNotFoundException.class)
