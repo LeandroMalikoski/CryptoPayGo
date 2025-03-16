@@ -2,6 +2,7 @@ package com.cryptopaygo.config.service;
 
 import com.cryptopaygo.config.entity.User;
 import com.cryptopaygo.config.enums.Role;
+import com.cryptopaygo.config.exception.UserNotFoundException;
 import com.cryptopaygo.config.records.UserRegisterRequestDTO;
 import com.cryptopaygo.config.records.UserResponseDTO;
 import com.cryptopaygo.config.repository.UserRepository;
@@ -31,5 +32,14 @@ public class UserService {
         user = userRepository.save(user);
 
         return new UserResponseDTO(user.getId(), user.getName(), user.getEmail(), user.getRole().getName());
+    }
+
+    public UserResponseDTO getUserById(Long id) {
+        return userRepository.findById(id)
+                .map(user -> new UserResponseDTO(user.getId(), user.getName(), user.getEmail(), user.getRole().name())
+                )
+                .orElseThrow(
+                        () -> new UserNotFoundException("User with id " + id + " not found")
+                );
     }
 }
