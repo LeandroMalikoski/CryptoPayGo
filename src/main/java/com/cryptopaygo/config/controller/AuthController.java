@@ -22,6 +22,7 @@ public class AuthController {
 
     private final TokenService tokenService;
 
+    // Construtor para injeção de dependências
     public AuthController(AuthenticationManager authenticationManager, TokenService tokenService) {
         this.authenticationManager = authenticationManager;
         this.tokenService = tokenService;
@@ -30,17 +31,24 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<AuthResponseDTO> login(@RequestBody LoginRequestDTO dto) {
         try {
+            //Criação de um token de autenticação usando e-mail e senha fornecidos no DTO
             var authenticationToken = new UsernamePasswordAuthenticationToken(dto.email(), dto.password());
 
+            //Tentativa de autenticação do usuário
             var authentication = authenticationManager.authenticate(authenticationToken);
 
+            //Recupera o usuário autenticado a partir do principal da autenticação
             var user = (User) authentication.getPrincipal();
 
+            //Gera um tokenJWT para o usuário autenticado
             var tokenJwt = tokenService.generateToken(user.getEmail());
 
+            //Retorna a resposta com o token gerado
             return ResponseEntity.status(HttpStatus.OK).body(new AuthResponseDTO(tokenJwt));
 
         } catch (AuthenticationException e) {
+            // Em caso de falha na autenticação, retorna um erro com status 401 (Unauthorized)
+            // Isso pode acontecer se o usuário fornecer credenciais incorretas
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AuthResponseDTO("Authentication Failed"));
         }
     }
