@@ -21,5 +21,4 @@ public enum Role {
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("No constant with name %s found in Role".formatted(name)));
     }
-
 }
