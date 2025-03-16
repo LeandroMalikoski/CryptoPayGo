@@ -27,16 +27,13 @@ public class SecurityFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         var tokenJwt = recoverToken(request);
-        System.out.println("Token JWT recuperado: " + tokenJwt);
 
         if (tokenJwt != null) {
             var userName = tokenService.validateToken(tokenJwt);
-            System.out.println("Nome de usuário extraído do token: " + userName);
             var user = userRepository.findByEmail(userName);
             if (user.isEmpty()) {
                 throw new RuntimeException("User not found");
             }
-            System.out.println("Usuário encontrado: " + user.get());
 
             var authentication = new UsernamePasswordAuthenticationToken(user.get().getEmail(), null, user.get().getAuthorities());
 
