@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,26 +29,20 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponseDTO> login(@RequestBody LoginRequestDTO dto) {
-        try {
-            //Criação de um token de autenticação usando e-mail e senha fornecidos no DTO
-            var authenticationToken = new UsernamePasswordAuthenticationToken(dto.email(), dto.password());
 
-            //Tentativa de autenticação do usuário
-            var authentication = authenticationManager.authenticate(authenticationToken);
+        // Criação de um token de autenticação usando e-mail e senha fornecidos no DTO
+        var authenticationToken = new UsernamePasswordAuthenticationToken(dto.email(), dto.password());
 
-            //Recupera o usuário autenticado a partir do principal da autenticação
-            var user = (User) authentication.getPrincipal();
+        // Tentativa de autenticação do usuário
+        var authentication = authenticationManager.authenticate(authenticationToken);
 
-            //Gera um tokenJWT para o usuário autenticado
-            var tokenJwt = tokenService.generateToken(user.getEmail());
+        // Recupera o usuário autenticado a partir do principal da autenticação
+        var user = (User) authentication.getPrincipal();
 
-            //Retorna a resposta com o token gerado
-            return ResponseEntity.status(HttpStatus.OK).body(new AuthResponseDTO(tokenJwt));
+        // Gera um tokenJWT para o usuário autenticado
+        var tokenJwt = tokenService.generateToken(user.getEmail());
 
-        } catch (AuthenticationException e) {
-            // Em caso de falha na autenticação, retorna um erro com status 401 (Unauthorized)
-            // Isso pode acontecer se o usuário fornecer credenciais incorretas
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AuthResponseDTO("Authentication Failed"));
-        }
+        // Retorna a resposta com o token gerado
+        return ResponseEntity.status(HttpStatus.OK).body(new AuthResponseDTO(tokenJwt));
     }
 }
