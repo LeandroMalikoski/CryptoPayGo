@@ -22,7 +22,6 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-
     public UserResponseDTO registerUser(UserRegisterRequestDTO dto) {
 
         var password = passwordEncoder.encode(dto.password());
@@ -41,5 +40,9 @@ public class UserService {
                 .orElseThrow(
                         () -> new UserNotFoundException("User with id " + id + " not found")
                 );
+    }
+
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
     }
 }
