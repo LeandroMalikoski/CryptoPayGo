@@ -2,7 +2,7 @@ package com.cryptopaygo.config.controller;
 
 import com.cryptopaygo.config.exception.RegisterInvalidException;
 import com.cryptopaygo.config.records.UserRegisterRequestDTO;
-import com.cryptopaygo.dto.ErrorResponseDTO;
+import com.cryptopaygo.dto.GeneralResponseDTO;
 import com.cryptopaygo.config.records.UserResponseDTO;
 import com.cryptopaygo.config.service.UserService;
 import jakarta.validation.Valid;
@@ -27,22 +27,30 @@ public class UserController {
 
     // Registre um novo usuário
     @PostMapping("/register")
-    public ResponseEntity<ErrorResponseDTO> registerUser(@Valid @RequestBody UserRegisterRequestDTO dto, BindingResult bindingResult) {
+    public ResponseEntity<GeneralResponseDTO> registerUser(@Valid @RequestBody UserRegisterRequestDTO dto, BindingResult bindingResult) {
 
+        // Valida os dados de entrada de uma requisição
         if (bindingResult.hasErrors()) {
+            // Se houver erros de validação, os detalhes dos erros são processados.
             String errorMessage = bindingResult.getFieldErrors().stream()
+                    // Converte os erros de campo em mensagens de erro legíveis.
                     .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                    // Junta todas as mensagens de erro em uma única string separada por vírgula.
                     .collect(Collectors.joining(", "));
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDTO(errorMessage, false));
-        }
 
+            // Retorna uma resposta HTTP com status 400 (BAD_REQUEST) e a lista de erros como corpo da resposta.
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new GeneralResponseDTO(errorMessage, false));
+        }
+        // Verifica se já existe um e-mail igual cadastrado no banco de dados
         if (userService.existsByEmail(dto.email())) {
             throw new RegisterInvalidException("Email address already in use");
         }
 
+        // Registra o usuário novo no banco de dados
         userService.registerUser(dto);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ErrorResponseDTO("User registered successfully", true));
+        // Retorna status 201 (CREATED) com mensagem de confirmação
+        return ResponseEntity.status(HttpStatus.CREATED).body(new GeneralResponseDTO("User registered successfully", true));
     }
 
     //Procura por um usuário pelo seu id
