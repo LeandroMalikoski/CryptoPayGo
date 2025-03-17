@@ -2,14 +2,21 @@ package com.cryptopaygo.config.service;
 
 import com.cryptopaygo.config.entity.User;
 import com.cryptopaygo.config.enums.Role;
+import com.cryptopaygo.config.exception.RegisterInvalidException;
+import com.cryptopaygo.config.exception.RequestInvalidException;
 import com.cryptopaygo.config.exception.UserNotFoundException;
 import com.cryptopaygo.config.records.UserRegisterRequestDTO;
 import com.cryptopaygo.config.records.UserResponseDTO;
+import com.cryptopaygo.config.records.UserUpdateDTO;
 import com.cryptopaygo.config.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
+
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -23,8 +30,26 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    public void bindingResultMaster(BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            String errorMessage = bindingResult.getFieldErrors().stream()
+                    .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                    .collect(Collectors.joining(", "));
+
+            throw new RequestInvalidException(errorMessage);
+        }
+    }
+
     // Registra um novo usuário, criptografando sua senha e convertendo o mesmo para um DTO
-    public UserResponseDTO registerUser(UserRegisterRequestDTO dto) {
+    public UserResponseDTO registerUser(UserRegisterRequestDTO dto, BindingResult bindingResult) {
+
+        // Valida os dados da requisição e retorna erros, se houver
+        bindingResultMaster(bindingResult);
+
+        // Verifica se o e-mail já está cadastrado
+        if (existsByEmail(dto.email())) {
+            throw new RegisterInvalidException("Email address already in use");
+        }
 
         var password = passwordEncoder.encode(dto.password());
 
@@ -56,5 +81,32 @@ public class UserService {
         return users.stream()
                 .map(user -> new UserResponseDTO(user.getId(), user.getName(), user.getEmail(), user.getRole().name()))
                 .toList();
+    }
+
+    public UserResponseDTO updateUserDetails(Long id, UserUpdateDTO dto, BindingResult bindingResult) {
+
+        // Valida os dados da requisição e retorna erros, se houver
+        bindingResultMaster(bindingResult);
+
+        var user = userRepository.getUserById(id);
+
+        if (user == null) {
+            throw new UserNotFoundException("User with id " + id + " not found");
+        }
+
+        // Atualiza apenas os campos presentes no DTO
+        if (dto.name() != null) {
+            user.setName(dto.name());
+        }
+        if (dto.email() != null) {
+            user.setEmail(dto.email());
+        }
+        if (dto.password() != null) {
+            user.setPassword(passwordEncoder.encode(dto.password()));
+        }
+
+        userRepository.save(user);
+
+        return new UserResponseDTO(user.getId(), user.getName(), user.getEmail(), user.getRole().name());
     }
 }

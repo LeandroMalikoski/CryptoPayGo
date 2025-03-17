@@ -1,19 +1,17 @@
 package com.cryptopaygo.config.controller;
 
-import com.cryptopaygo.config.exception.RegisterInvalidException;
 import com.cryptopaygo.config.records.UserRegisterRequestDTO;
+import com.cryptopaygo.config.records.UserUpdateDTO;
 import com.cryptopaygo.dto.GeneralResponseDTO;
 import com.cryptopaygo.config.records.UserResponseDTO;
 import com.cryptopaygo.config.service.UserService;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/users")
@@ -28,21 +26,8 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<GeneralResponseDTO> registerUser(@Valid @RequestBody UserRegisterRequestDTO dto, BindingResult bindingResult) {
 
-        // Valida os dados da requisição e retorna erros, se houver
-        if (bindingResult.hasErrors()) {
-            String errorMessage = bindingResult.getFieldErrors().stream()
-                    .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                    .collect(Collectors.joining(", "));
-
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new GeneralResponseDTO(errorMessage, false));
-        }
-        // Verifica se o e-mail já está cadastrado
-        if (userService.existsByEmail(dto.email())) {
-            throw new RegisterInvalidException("Email address already in use");
-        }
-
         // Registra o usuário novo no banco de dados
-        userService.registerUser(dto);
+        userService.registerUser(dto, bindingResult);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(new GeneralResponseDTO("User registered successfully", true));
     }
@@ -62,5 +47,14 @@ public class UserController {
         var user = userService.getUserById(id);
 
         return ResponseEntity.status(HttpStatus.OK).body(new UserResponseDTO(user));
+    }
+
+    @PatchMapping("/{id}")
+    @Transactional
+    public ResponseEntity<UserResponseDTO> updateUserDetails(@PathVariable Long id, @RequestBody @Valid UserUpdateDTO dto, BindingResult bindingResult) {
+
+        var user = userService.updateUserDetails(id, dto, bindingResult);
+
+        return ResponseEntity.ok(new UserResponseDTO(user));
     }
 }
