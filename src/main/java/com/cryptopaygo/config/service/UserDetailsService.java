@@ -14,7 +14,9 @@ public class UserDetailsService implements org.springframework.security.core.use
         this.userRepository = userRepository;
     }
 
+    // Carrega um usuário pelo e-mail, usado como o nome de usuário para login
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+
         var user = userRepository.findByEmail(email);
 
         if (user.isEmpty()) {

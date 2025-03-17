@@ -12,14 +12,15 @@ import java.time.Instant;
 public class TokenService {
 
     @Value("${api.security.token.secret}")
-    private String secret;
+    private String secret; // Chave secreta usada para assinar o token JWT
     @Value("${api.security.token.validity}")
-    private int validity;
+    private int validity; // Tempo de validade do token
 
+    // Gera um token JWT para o nome de usuário fornecido
     public String generateToken(String userName){
         try {
-
             var algorithm = Algorithm.HMAC256(secret);
+
             return JWT.create()
                     .withIssuer("Crypto Pay Go")
                     .withSubject(userName)
@@ -33,9 +34,12 @@ public class TokenService {
         }
     }
 
+    // Valida um token JWT e retorna o nome do usuário associado a ele
     public String validateToken(String tokenJWT){
         try{
+
             var algorithm = Algorithm.HMAC256(secret);
+
             return JWT.require(algorithm)
                     .withIssuer("Crypto Pay Go")
                     .build()

@@ -23,6 +23,7 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    // Registra um novo usuário, criptografando sua senha e convertendo o mesmo para um DTO
     public UserResponseDTO registerUser(UserRegisterRequestDTO dto) {
 
         var password = passwordEncoder.encode(dto.password());
@@ -34,6 +35,7 @@ public class UserService {
         return new UserResponseDTO(user.getId(), user.getName(), user.getEmail(), user.getRole().getName());
     }
 
+    // Retorna os detalhes de um usuário baseado no ID
     public UserResponseDTO getUserById(Long id) {
         return userRepository.findById(id)
                 .map(user -> new UserResponseDTO(user.getId(), user.getName(), user.getEmail(), user.getRole().name())
@@ -47,6 +49,7 @@ public class UserService {
         return userRepository.existsByEmail(email);
     }
 
+    // Retorna todos os usuários no sistema, mapeando para DTOs
     public List<UserResponseDTO> findAll() {
         List<User> users = userRepository.findAll();
 
