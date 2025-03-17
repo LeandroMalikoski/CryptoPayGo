@@ -1,6 +1,7 @@
 package com.cryptopaygo.exception;
 
 import com.cryptopaygo.config.exception.RegisterInvalidException;
+import com.cryptopaygo.config.exception.RequestInvalidException;
 import com.cryptopaygo.config.exception.TokenInvalidException;
 import com.cryptopaygo.config.exception.UserNotFoundException;
 import com.cryptopaygo.dto.GeneralResponseDTO;
@@ -13,6 +14,14 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
+
+    // Tratar exceção quando o request(json) enviado estiver com erros do validation
+    @ExceptionHandler(RequestInvalidException.class)
+    public ResponseEntity<GeneralResponseDTO> handleRequestInvalidException(RequestInvalidException e) {
+        // Retorna uma resposta com status 400 (BAD REQUEST) e a mensagem de erro
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new GeneralResponseDTO(e.getMessage(), false));
+    }
 
     @ExceptionHandler(RegisterInvalidException.class)
     public ResponseEntity<GeneralResponseDTO> handleRegisterInvalidException(RegisterInvalidException e) {
