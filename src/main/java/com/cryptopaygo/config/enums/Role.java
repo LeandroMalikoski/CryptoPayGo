@@ -15,6 +15,7 @@ public enum Role {
         this.name = name;
     }
 
+    // Converte uma string para o valor correspondente do enum Role.
     public static Role fromString(String name) {
         return Arrays.stream(Role.values())
                 .filter(role -> role.name().equalsIgnoreCase(name))
