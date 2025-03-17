@@ -1,5 +1,6 @@
 package com.cryptopaygo.exception;
 
+import com.cryptopaygo.config.exception.RegisterInvalidException;
 import com.cryptopaygo.config.exception.TokenInvalidException;
 import com.cryptopaygo.config.exception.UserNotFoundException;
 import com.cryptopaygo.dto.ErrorResponseDTO;
@@ -13,6 +14,13 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(RegisterInvalidException.class)
+    public ResponseEntity<ErrorResponseDTO> handleRegisterInvalidException(RegisterInvalidException e) {
+        // Retorna uma resposta com status 409 (CONFLICT) e a mensagem de erro
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ErrorResponseDTO(e.getMessage(), false));
+    }
+
     // Tratar exceção quando login falhar
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ErrorResponseDTO> handleBadCredentials() {
@@ -23,18 +31,18 @@ public class GlobalExceptionHandler {
 
     // Tratar exceção quando o Usuário não for encontrado
     @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<ErrorResponseDTO> handleUserNotFound(UserNotFoundException ex) {
+    public ResponseEntity<ErrorResponseDTO> handleUserNotFound(UserNotFoundException e) {
         // Retorna uma resposta com status 404 (NOT FOUND) e a mensagem de erro
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(new ErrorResponseDTO(ex.getMessage(), false));
+                .body(new ErrorResponseDTO(e.getMessage(), false));
     }
 
     // Tratar exceção quando token for inválido ou expirado
     @ExceptionHandler(TokenInvalidException.class)
-    public ResponseEntity<ErrorResponseDTO> handleTokenInvalidException(TokenInvalidException ex) {
+    public ResponseEntity<ErrorResponseDTO> handleTokenInvalidException(TokenInvalidException e) {
         // Retorna uma resposta com status 401 (UNAUTHORIZED) e a mensagem de erro
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(new ErrorResponseDTO(ex.getMessage(), false));
+                .body(new ErrorResponseDTO(e.getMessage(), false));
     }
 
     // Tratar exceção quando o ID fornecido não pode ser convertido

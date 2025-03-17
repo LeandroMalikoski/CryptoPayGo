@@ -1,5 +1,6 @@
 package com.cryptopaygo.config.controller;
 
+import com.cryptopaygo.config.exception.RegisterInvalidException;
 import com.cryptopaygo.config.records.UserRegisterRequestDTO;
 import com.cryptopaygo.dto.ErrorResponseDTO;
 import com.cryptopaygo.config.records.UserResponseDTO;
@@ -24,6 +25,7 @@ public class UserController {
         this.userService = userService;
     }
 
+    // Registre um novo usuário
     @PostMapping("/register")
     public ResponseEntity<ErrorResponseDTO> registerUser(@Valid @RequestBody UserRegisterRequestDTO dto, BindingResult bindingResult) {
 
@@ -33,16 +35,14 @@ public class UserController {
                     .collect(Collectors.joining(", "));
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDTO(errorMessage, false));
         }
-        try {
 
-            if (userService.existsByEmail(dto.email())) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponseDTO("Email already exists", false));
-            }
-            userService.registerUser(dto);
-            return ResponseEntity.status(HttpStatus.CREATED).body(new ErrorResponseDTO("User registered successfully", true));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponseDTO("An error occurred during registration", false));
+        if (userService.existsByEmail(dto.email())) {
+            throw new RegisterInvalidException("Email address already in use");
         }
+
+        userService.registerUser(dto);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ErrorResponseDTO("User registered successfully", true));
     }
 
     //Procura por um usuário pelo seu id
