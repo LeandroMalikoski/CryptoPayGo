@@ -21,7 +21,6 @@ public class AuthController {
 
     private final TokenService tokenService;
 
-    // Construtor para injeção de dependências
     public AuthController(AuthenticationManager authenticationManager, TokenService tokenService) {
         this.authenticationManager = authenticationManager;
         this.tokenService = tokenService;
@@ -30,19 +29,19 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<AuthResponseDTO> login(@RequestBody LoginRequestDTO dto) {
 
-        // Criação de um token de autenticação usando e-mail e senha fornecidos no DTO
+        // Cria um objeto de autenticação com as credenciais fornecidas
         var authenticationToken = new UsernamePasswordAuthenticationToken(dto.email(), dto.password());
 
-        // Tentativa de autenticação do usuário
+        // Autentica o usuário com base no e-mail e senha informados
         var authentication = authenticationManager.authenticate(authenticationToken);
 
-        // Recupera o usuário autenticado a partir do principal da autenticação
+        // Obtém o usuário autenticado a partir do contexto de autenticação
         var user = (User) authentication.getPrincipal();
 
-        // Gera um tokenJWT para o usuário autenticado
+        // Gera um token JWT para a sessão do usuário autenticado
         var tokenJwt = tokenService.generateToken(user.getEmail());
 
-        // Retorna a resposta com o token gerado
+        // Retorna o token de acesso na resposta
         return ResponseEntity.status(HttpStatus.OK).body(new AuthResponseDTO(tokenJwt));
     }
 }
