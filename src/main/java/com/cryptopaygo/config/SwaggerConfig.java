@@ -13,6 +13,6 @@ public class SwaggerConfig {
                 .info(new Info()
                         .title("Crypto Pay Go")
                         .version("1.0.0")
-                        .description("Crypto Pay Go"));
+                        .description("General store with Crypto payment form"));
     }
 }
