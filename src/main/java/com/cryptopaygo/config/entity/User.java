@@ -40,7 +40,7 @@ public class User implements UserDetails {
     @NotBlank
     private String password;
 
-    // Armazena a role como texto no banco, em vez de índice numérico
+    // Armazena a role como string no banco, em vez de índice numérico
     @Enumerated(EnumType.STRING)
     private Role role;
 
