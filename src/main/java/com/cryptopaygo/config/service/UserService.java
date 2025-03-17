@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,6 +41,7 @@ public class UserService {
         }
     }
 
+    @Transactional
     // Registra um novo usuário, criptografando sua senha e convertendo o mesmo para um DTO
     public UserResponseDTO registerUser(UserRegisterRequestDTO dto, BindingResult bindingResult) {
 
@@ -83,6 +85,7 @@ public class UserService {
                 .toList();
     }
 
+    @Transactional
     public UserResponseDTO updateUserDetails(Long id, UserUpdateDTO dto, BindingResult bindingResult) {
 
         // Valida os dados da requisição e retorna erros, se houver
@@ -108,5 +111,15 @@ public class UserService {
         userRepository.save(user);
 
         return new UserResponseDTO(user.getId(), user.getName(), user.getEmail(), user.getRole().name());
+    }
+
+    @Transactional
+    public void deleteUser(Long id) {
+        Optional<User> user = userRepository.findById(id);
+        if (user.isPresent()) {
+            userRepository.delete(user.get());
+        } else {
+            throw new UserNotFoundException("User not found");
+        }
     }
 }

@@ -5,7 +5,6 @@ import com.cryptopaygo.config.records.UserUpdateDTO;
 import com.cryptopaygo.dto.GeneralResponseDTO;
 import com.cryptopaygo.config.records.UserResponseDTO;
 import com.cryptopaygo.config.service.UserService;
-import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,11 +49,18 @@ public class UserController {
     }
 
     @PatchMapping("/{id}")
-    @Transactional
     public ResponseEntity<UserResponseDTO> updateUserDetails(@PathVariable Long id, @RequestBody @Valid UserUpdateDTO dto, BindingResult bindingResult) {
 
         var user = userService.updateUserDetails(id, dto, bindingResult);
 
         return ResponseEntity.ok(new UserResponseDTO(user));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<GeneralResponseDTO> deleteUser(@PathVariable Long id) {
+
+        userService.deleteUser(id);
+
+        return ResponseEntity.status(HttpStatus.OK).body(new GeneralResponseDTO("User deleted successfully", true));
     }
 }
