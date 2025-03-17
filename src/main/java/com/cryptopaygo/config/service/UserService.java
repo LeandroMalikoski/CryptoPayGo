@@ -9,6 +9,7 @@ import com.cryptopaygo.config.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import java.util.List;
 
 @Service
 @Transactional
@@ -44,5 +45,13 @@ public class UserService {
 
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
+    }
+
+    public List<UserResponseDTO> findAll() {
+        List<User> users = userRepository.findAll();
+
+        return users.stream()
+                .map(user -> new UserResponseDTO(user.getId(), user.getName(), user.getEmail(), user.getRole().name()))
+                .toList();
     }
 }
