@@ -36,6 +36,12 @@ public class Product {
     private Double price;
 
     // Valor será atualizado após uma movimentação de entrada ou saída ser criada na tabela de "Stock"
-    @NotNull
     private Integer quantity;
+
+    public Product(@NotBlank String name, @NotBlank String description, @NotBlank String category, @NotNull Double price) {
+        this.name = name;
+        this.description = description;
+        this.category = category;
+        this.price = price;
+    }
 }
