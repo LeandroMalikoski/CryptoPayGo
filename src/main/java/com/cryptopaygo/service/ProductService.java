@@ -11,6 +11,7 @@ import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 
+import java.util.DoubleSummaryStatistics;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -60,5 +61,30 @@ public class ProductService {
                 .map(product -> new ProductResponseDTO(product.getId(), product.getName(), product.getDescription(),
                         product.getCategory(), product.getPrice(), product.getQuantity()))
                 .toList();
+    }
+
+    public ProductResponseDTO getProduct(Long id) {
+
+        Product product = productRepository.findById(id);
+
+        if (product == null) {
+            throw new RequestInvalidException("Product not found");
+        }
+
+        return new ProductResponseDTO(product.getId(), product.getName(), product.getCategory(), product.getDescription(),
+                product.getPrice(), product.getQuantity());
+    }
+
+    // Utiliza o DoubleSummaryStatistics para trazer detalhes sobre o preço dos produtos cadastrados
+    public DoubleSummaryStatistics getStatistics() {
+
+        DoubleSummaryStatistics summaryStatistics = new DoubleSummaryStatistics();
+
+        List<Product> products = productRepository.findAll();
+
+        products.forEach(product -> summaryStatistics.accept(product.getPrice()));
+
+        return summaryStatistics;
+
     }
 }
