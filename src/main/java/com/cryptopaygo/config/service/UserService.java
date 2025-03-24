@@ -9,6 +9,7 @@ import com.cryptopaygo.config.records.UserRegisterRequestDTO;
 import com.cryptopaygo.config.records.UserResponseDTO;
 import com.cryptopaygo.config.records.UserUpdateDTO;
 import com.cryptopaygo.config.repository.UserRepository;
+import com.cryptopaygo.dto.GeneralResponseDTO;
 import jakarta.transaction.Transactional;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,6 +32,7 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    // Valida os dados da requisição e retorna erros, se houver
     public void bindingResultMaster(BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             String errorMessage = bindingResult.getFieldErrors().stream()
@@ -43,9 +45,8 @@ public class UserService {
 
     @Transactional
     // Registra um novo usuário, criptografando sua senha e convertendo o mesmo para um DTO
-    public UserResponseDTO registerUser(UserRegisterRequestDTO dto, BindingResult bindingResult) {
+    public void registerUser(UserRegisterRequestDTO dto, BindingResult bindingResult) {
 
-        // Valida os dados da requisição e retorna erros, se houver
         bindingResultMaster(bindingResult);
 
         // Verifica se o e-mail já está cadastrado
@@ -57,9 +58,7 @@ public class UserService {
 
         var user = new User(dto.name(), dto.email(), password, Role.fromString(dto.role()));
 
-        user = userRepository.save(user);
-
-        return new UserResponseDTO(user.getId(), user.getName(), user.getEmail(), user.getRole().getName());
+        userRepository.save(user);
     }
 
     // Retorna os detalhes de um usuário baseado no ID
@@ -88,7 +87,6 @@ public class UserService {
     @Transactional
     public UserResponseDTO updateUserDetails(Long id, UserUpdateDTO dto, BindingResult bindingResult) {
 
-        // Valida os dados da requisição e retorna erros, se houver
         bindingResultMaster(bindingResult);
 
         var user = userRepository.getUserById(id);

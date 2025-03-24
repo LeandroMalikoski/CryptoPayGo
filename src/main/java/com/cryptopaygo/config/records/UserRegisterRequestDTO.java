@@ -2,6 +2,7 @@ package com.cryptopaygo.config.records;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public record UserRegisterRequestDTO(
@@ -18,6 +19,7 @@ public record UserRegisterRequestDTO(
         String email,
 
         @NotBlank(message="Role is required")
+        @Pattern(regexp = "ADMIN|USER", message = "Role must be one of: ADMIN or USER")
         String role
 ) {
 }
