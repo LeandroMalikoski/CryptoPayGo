@@ -14,6 +14,10 @@ public record StockMovementDTO(
 
         MovementType movementType,
 
+        String currencyCoin,
+
+        Double purchasePrice,
+
         LocalDateTime movementDate
 ) {
 }

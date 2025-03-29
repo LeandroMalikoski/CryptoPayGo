@@ -36,5 +36,14 @@ public class Stock {
     @Enumerated(EnumType.STRING)
     private MovementType movementType;
 
+    // Será registrado o tipo de moeda como Dólar, Bitcoin, etc...
+    private String currencyType;
+
+    // Preço da moeda no momento
+    private Double currencyPrice;
+
+    // Será registrado o preço total
+    private Double purchasePrice;
+
     private LocalDateTime movementDate = LocalDateTime.now();
 }
