@@ -14,7 +14,6 @@ import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -49,13 +48,11 @@ public class UserService {
         bindingResultMaster(bindingResult);
 
         // Verifica se o e-mail já está cadastrado
-        if (userRepository.existsByEmail(dto.email())) {
-            throw new RegisterInvalidException("Email address already in use");
-        }
+        if (userRepository.existsByEmail(dto.email())) throw new RegisterInvalidException("Email address already in use");
 
-        if (userRepository.existsByName(dto.name())) {
-            throw new RegisterInvalidException("Name already in use");
-        }
+
+        if (userRepository.existsByName(dto.name())) throw new RegisterInvalidException("Name already in use");
+
 
         var password = passwordEncoder.encode(dto.password());
 
@@ -90,28 +87,16 @@ public class UserService {
 
         var user = userRepository.getUserById(id);
 
-        if (user == null) {
-            throw new UserNotFoundException("User with id " + id + " not found");
-        }
+        if (user == null) throw new UserNotFoundException("User with id " + id + " not found");
 
-        if (userRepository.existsByEmail(dto.email())) {
-            throw new RegisterInvalidException("Email address already in use");
-        }
+        if (userRepository.existsByEmail(dto.email())) throw new RegisterInvalidException("Email address already in use");
 
-        if (userRepository.existsByName(dto.name())) {
-            throw new RegisterInvalidException("Name already in use");
-        }
+        if (userRepository.existsByName(dto.name())) throw new RegisterInvalidException("Name already in use");
 
         // Atualiza apenas os campos presentes no DTO
-        if (dto.name() != null) {
-            user.setName(dto.name());
-        }
-        if (dto.email() != null) {
-            user.setEmail(dto.email());
-        }
-        if (dto.password() != null) {
-            user.setPassword(passwordEncoder.encode(dto.password()));
-        }
+        if (dto.name() != null) user.setName(dto.name());
+        if (dto.email() != null) user.setEmail(dto.email());
+        if (dto.password() != null) user.setPassword(passwordEncoder.encode(dto.password()));
 
         userRepository.save(user);
 
