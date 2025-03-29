@@ -14,4 +14,7 @@ public record ProductResponseDTO(
 
         Integer quantity
 ) {
+    public ProductResponseDTO(ProductResponseDTO product) {
+        this(product.id(), product.name(), product.description(), product.category(), product.price(), product.quantity());
+    }
 }

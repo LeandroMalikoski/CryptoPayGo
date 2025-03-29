@@ -1,21 +1,17 @@
 package com.cryptopaygo.controller;
 
-import com.cryptopaygo.dto.GeneralResponseDTO;
-import com.cryptopaygo.dto.ProductNewDTO;
-import com.cryptopaygo.dto.ProductResponseDTO;
-import com.cryptopaygo.dto.StatisticsDTO;
+import com.cryptopaygo.dto.*;
 import com.cryptopaygo.service.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.DoubleSummaryStatistics;
 import java.util.List;
 
 @RestController
-@RequestMapping("product")
+@RequestMapping("/product")
 public class ProductController {
 
     private final ProductService productService;
@@ -56,5 +52,22 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(new StatisticsDTO((int) summaryStatistics.getCount(), summaryStatistics.getSum(),
                 summaryStatistics.getMin(), summaryStatistics.getMax(), summaryStatistics.getAverage()));
 
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<GeneralResponseDTO> deleteProduct(@PathVariable Long id) {
+
+        productService.deleteProduct(id);
+
+        return ResponseEntity.status(HttpStatus.OK).body(new GeneralResponseDTO("Product deleted successfully", true));
+
+    }
+
+    @PatchMapping("{id}")
+    public ResponseEntity<ProductResponseDTO> updateProduct(@PathVariable Long id, @RequestBody ProductUpdateDTO dto, BindingResult bindingResult) {
+
+        var product = productService.updateProduct(id, dto, bindingResult);
+
+        return ResponseEntity.status(HttpStatus.OK).body(new ProductResponseDTO(product));
     }
 }
