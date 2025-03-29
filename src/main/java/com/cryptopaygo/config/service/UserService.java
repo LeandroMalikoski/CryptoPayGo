@@ -9,7 +9,6 @@ import com.cryptopaygo.config.records.UserRegisterRequestDTO;
 import com.cryptopaygo.config.records.UserResponseDTO;
 import com.cryptopaygo.config.records.UserUpdateDTO;
 import com.cryptopaygo.config.repository.UserRepository;
-import com.cryptopaygo.dto.GeneralResponseDTO;
 import jakarta.transaction.Transactional;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -50,8 +49,12 @@ public class UserService {
         bindingResultMaster(bindingResult);
 
         // Verifica se o e-mail já está cadastrado
-        if (existsByEmail(dto.email())) {
+        if (userRepository.existsByEmail(dto.email())) {
             throw new RegisterInvalidException("Email address already in use");
+        }
+
+        if (userRepository.existsByName(dto.name())) {
+            throw new RegisterInvalidException("Name already in use");
         }
 
         var password = passwordEncoder.encode(dto.password());
@@ -69,10 +72,6 @@ public class UserService {
                 .orElseThrow(
                         () -> new UserNotFoundException("User with id " + id + " not found")
                 );
-    }
-
-    public boolean existsByEmail(String email) {
-        return userRepository.existsByEmail(email);
     }
 
     // Retorna todos os usuários no sistema, mapeando para DTOs
@@ -93,6 +92,14 @@ public class UserService {
 
         if (user == null) {
             throw new UserNotFoundException("User with id " + id + " not found");
+        }
+
+        if (userRepository.existsByEmail(dto.email())) {
+            throw new RegisterInvalidException("Email address already in use");
+        }
+
+        if (userRepository.existsByName(dto.name())) {
+            throw new RegisterInvalidException("Name already in use");
         }
 
         // Atualiza apenas os campos presentes no DTO
