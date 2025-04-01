@@ -1,5 +1,6 @@
 package com.cryptopaygo.integration.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
@@ -14,12 +15,12 @@ import java.util.stream.Collectors;
 public class CoinMarketCapAPI {
 
     // Principal função para retornar a resposta da API CoinMarketCap
-    public String getResponse(String endpoint, String apiKey) {
+    public double getResponse(String endpoint, String apiKey, String currencyType, String coin) {
         validateParameters(endpoint, apiKey);
 
         try {
             HttpURLConnection connection = createConnection(endpoint, apiKey);
-            return processResponse(connection);
+            return processResponse(connection, currencyType, coin);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -38,11 +39,22 @@ public class CoinMarketCapAPI {
     }
 
     //
-    private String processResponse(HttpURLConnection connection) throws IOException {
+    private double processResponse(HttpURLConnection connection, String cryptoCoin, String coin) throws IOException {
         int status = connection.getResponseCode();
         if (status == HttpURLConnection.HTTP_OK) {
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
-                return reader.lines().collect(Collectors.joining());
+                var response = reader.lines().collect(Collectors.joining("\n"));
+
+                ObjectMapper mapper = new ObjectMapper();
+
+                var json = mapper.readTree(response);
+
+                return json.get("data")
+                        .get(cryptoCoin)
+                        .get("quote")
+                        .get(coin)
+                        .get("price")
+                        .asDouble();
             }
         } else {
             throw new RuntimeException("API Error: HTTP " + status + " - " + connection.getResponseMessage());

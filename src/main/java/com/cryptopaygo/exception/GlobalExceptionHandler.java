@@ -12,6 +12,14 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+    // Tratar exceção quando ocorrer erro no registro de entrada ou saida do estoque
+    @ExceptionHandler(MovementErrorException.class)
+    public ResponseEntity<GeneralResponseDTO> movementErrorException(MovementErrorException e) {
+        // Retorna uma resposta com status 400 (BAD REQUEST) e a mensagem de erro
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new GeneralResponseDTO(e.getMessage(), false));
+    }
+
     // Tratar exceção quando o request(json) enviado estiver com erros do validation
     @ExceptionHandler(RequestInvalidException.class)
     public ResponseEntity<GeneralResponseDTO> handleRequestInvalidException(RequestInvalidException e) {

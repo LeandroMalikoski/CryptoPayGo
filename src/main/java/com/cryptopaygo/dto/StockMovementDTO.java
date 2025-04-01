@@ -2,13 +2,9 @@ package com.cryptopaygo.dto;
 
 import com.cryptopaygo.enums.MovementType;
 
-import java.time.LocalDateTime;
-
 public record StockMovementDTO(
 
         Long productId,
-
-        Long userId,
 
         Integer quantity,
 
@@ -16,8 +12,6 @@ public record StockMovementDTO(
 
         String currencyCoin,
 
-        Double purchasePrice,
-
-        LocalDateTime movementDate
+        String convertCoin
 ) {
 }

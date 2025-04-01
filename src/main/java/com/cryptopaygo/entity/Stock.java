@@ -1,7 +1,9 @@
 package com.cryptopaygo.entity;
 
 import com.cryptopaygo.config.entity.User;
+import com.cryptopaygo.config.repository.UserRepository;
 import com.cryptopaygo.enums.MovementType;
+import com.cryptopaygo.repository.ProductRepository;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -40,10 +42,33 @@ public class Stock {
     private String currencyType;
 
     // Preço da moeda no momento
-    private Double currencyPrice;
+    private Double currencyPaid;
 
     // Será registrado o preço total
     private Double purchasePrice;
 
     private LocalDateTime movementDate = LocalDateTime.now();
+
+    // Repositórios para buscar as entidades Product e User
+    @Transient
+    private ProductRepository productRepository;
+
+    @Transient
+    private UserRepository userRepository;
+
+    public Stock(Long productId, Long userId, Integer quantity, MovementType movementType, String currencyType, Double currencyPaid, Double purchasePrice, LocalDateTime movementDate, ProductRepository productRepository, UserRepository userRepository) {
+        this.productRepository = productRepository;
+        this.userRepository = userRepository;
+
+        // Buscar os objetos Product e User usando seus respectivos repositórios
+        this.product = productRepository.getProductById(productId).orElseThrow(() -> new IllegalArgumentException("Product not found"));
+        this.user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        this.quantity = quantity;
+        this.movementType = movementType;
+        this.currencyType = currencyType;
+        this.currencyPaid = currencyPaid;
+        this.purchasePrice = purchasePrice;
+        this.movementDate = movementDate;
+    }
 }

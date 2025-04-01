@@ -1,8 +1,8 @@
 package com.cryptopaygo.config.filter;
 
 import com.cryptopaygo.config.exception.TokenInvalidException;
-import com.cryptopaygo.config.repository.UserRepository;
 import com.cryptopaygo.config.service.TokenService;
+import com.cryptopaygo.config.service.UserDetailsService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -21,11 +21,11 @@ import java.util.Map;
 @Component
 public class SecurityFilter extends OncePerRequestFilter {
 
-    private final UserRepository userRepository;
     private final TokenService tokenService;
+    private final UserDetailsService userDetailsService;
 
-    public SecurityFilter(UserRepository userRepository, TokenService tokenService) {
-        this.userRepository = userRepository;
+    public SecurityFilter(TokenService tokenService, UserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
         this.tokenService = tokenService;
     }
 
@@ -37,13 +37,13 @@ public class SecurityFilter extends OncePerRequestFilter {
 
             if (tokenJwt != null) {
                 var userName = tokenService.validateToken(tokenJwt);
-                var user = userRepository.findByEmail(userName);
-                if (user.isEmpty()) {
+                var user = userDetailsService.loadUserByUsername(userName);
+                if (user == null) {
                     throw new RuntimeException("User not found");
                 }
 
                 // Cria uma autenticação com o usuário recuperado
-                var authentication = new UsernamePasswordAuthenticationToken(user.get().getEmail(), null, user.get().getAuthorities());
+                var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
 
                 // Define autenticação no contexto de segurança do Spring
                 SecurityContextHolder.getContext().setAuthentication(authentication);

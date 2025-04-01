@@ -27,9 +27,9 @@ public class CoinMarketCapController {
 
     // Função que NÂO exige o envio da Chave da API no header do insomnia, postman, etc.
     // A Chave estará no application.properties para facilitar teste e desenvolvimento
-    @GetMapping("/cr")
-    public String getCryptos() {
-        String apiKey = environment.getProperty("coinmarketcap.apikey");
-        return coinMarketCapService.getCurrency(apiKey);
-    }
+//    @GetMapping("/cr")
+//    public String getCryptos() {
+//        String apiKey = environment.getProperty("coinmarketcap.apikey");
+//        return coinMarketCapService.getCrypto(apiKey);
+//    }
 }

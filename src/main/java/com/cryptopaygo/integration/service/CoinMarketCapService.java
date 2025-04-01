@@ -11,11 +11,17 @@ public class CoinMarketCapService {
         this.coinMarketCapAPI = coinMarketCapAPI;
     }
 
-    public String getCurrency(String apiKey) {
+//    public String getCrypto(String apiKey) {
+//
+//        var endpoint = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest";
+//
+//        return coinMarketCapAPI.getResponse(endpoint, apiKey);
+//    }
 
-        var endpoint = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest";
+    public double getCurrency(String apiKey, String currencyType, String convertCoin) {
 
-        return coinMarketCapAPI.getResponse(endpoint, apiKey);
+        var endpoint = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol=" + currencyType + "&convert=" + convertCoin;
+
+        return coinMarketCapAPI.getResponse(endpoint, apiKey, currencyType, convertCoin);
     }
-
 }

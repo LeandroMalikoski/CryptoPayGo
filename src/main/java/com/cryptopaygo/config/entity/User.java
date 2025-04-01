@@ -44,6 +44,10 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    public Long getUserId() {
+        return id;
+    }
+
     public User(@NotBlank @NotNull String name, @NotBlank @NotNull @Email String email, @NotBlank @NotNull String password, Role role) {
         this.name = name;
         this.email = email;
