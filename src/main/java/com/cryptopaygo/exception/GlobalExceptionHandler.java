@@ -12,6 +12,14 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+    // Tratar quando um registro do estoque não for encontrado
+    @ExceptionHandler(StockRegisterNotFound.class)
+    public ResponseEntity<GeneralResponseDTO> stockRegisterNotFound(StockRegisterNotFound e) {
+        // Retorna uma resposta com status 404 (NOT FOUND) e a mensagem de erro
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new GeneralResponseDTO(e.getMessage(), false));
+    }
+
     // Tratar exceção quando ocorrer erro no registro de entrada ou saida do estoque
     @ExceptionHandler(MovementErrorException.class)
     public ResponseEntity<GeneralResponseDTO> movementErrorException(MovementErrorException e) {

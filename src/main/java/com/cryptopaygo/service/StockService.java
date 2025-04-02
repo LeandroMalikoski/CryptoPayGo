@@ -9,6 +9,7 @@ import com.cryptopaygo.entity.Product;
 import com.cryptopaygo.entity.Stock;
 import com.cryptopaygo.enums.MovementType;
 import com.cryptopaygo.exception.MovementErrorException;
+import com.cryptopaygo.exception.StockRegisterNotFound;
 import com.cryptopaygo.integration.service.CoinMarketCapService;
 import com.cryptopaygo.repository.ProductRepository;
 import com.cryptopaygo.repository.StockRepository;
@@ -17,7 +18,9 @@ import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
+
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -121,5 +124,16 @@ public class StockService {
         } catch (MovementErrorException e) {
             throw new MovementErrorException("Error occurred during the exit record");
         }
+    }
+
+    public StockResponseDTO findStockById(Long id) {
+
+        Optional<Stock> stock = stockRepository.findStockById(id);
+
+        if (stock.isEmpty()) throw new StockRegisterNotFound("Stock not found");
+
+        return new StockResponseDTO(stock.get().getId(), stock.get().getProduct().getId(), stock.get().getUser().getUserId(), stock.get().getQuantity(),
+                stock.get().getMovementType(), stock.get().getCurrencyType(), stock.get().getCurrencyPaid(), stock.get().getPurchasePrice(), stock.get().getMovementDate());
+
     }
 }
