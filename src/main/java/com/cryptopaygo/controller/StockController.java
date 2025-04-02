@@ -1,6 +1,7 @@
 package com.cryptopaygo.controller;
 
 import com.cryptopaygo.config.entity.User;
+import com.cryptopaygo.dto.StockBalanceDTO;
 import com.cryptopaygo.dto.StockMovementDTO;
 import com.cryptopaygo.dto.StockResponseDTO;
 import com.cryptopaygo.service.StockService;
@@ -32,6 +33,13 @@ public class StockController {
     public ResponseEntity<StockResponseDTO> findStockById(@PathVariable Long id) {
 
         return ResponseEntity.status(HttpStatus.OK).body(stockService.findStockById(id));
+
+    }
+
+    @GetMapping("/balance")
+    public ResponseEntity<StockBalanceDTO> getStockBalance() {
+
+        return ResponseEntity.status(HttpStatus.OK).body(stockService.getStockBalance());
 
     }
 }

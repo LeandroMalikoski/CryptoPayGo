@@ -3,6 +3,7 @@ package com.cryptopaygo.service;
 import com.cryptopaygo.config.entity.User;
 import com.cryptopaygo.config.exception.RequestInvalidException;
 import com.cryptopaygo.config.repository.UserRepository;
+import com.cryptopaygo.dto.StockBalanceDTO;
 import com.cryptopaygo.dto.StockMovementDTO;
 import com.cryptopaygo.dto.StockResponseDTO;
 import com.cryptopaygo.entity.Product;
@@ -20,6 +21,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -61,9 +64,9 @@ public class StockService {
 
         if (product == null) throw new RequestInvalidException("Product not found");
 
-        if (dto.movementType() == MovementType.ENTRY) {
+        if (dto.movementType() == MovementType.fromString("ENTRY")) {
             return stockEntry(dto, product, user);
-        } else if (dto.movementType() == MovementType.EXIT) {
+        } else if (dto.movementType() == MovementType.fromString("EXIT")) {
             return stockExit(dto, product, user, apiKey);
         }
         return null;
@@ -80,7 +83,7 @@ public class StockService {
             var movementDate = LocalDateTime.now();
 
             Stock stock = new Stock(dto.productId(), user.getUserId(), dto.quantity(), dto.movementType(), null,
-                    null, null, movementDate, productRepository, userRepository);
+                    null, dto.purchasePrice(), movementDate, productRepository, userRepository);
 
             stockRepository.save(stock);
 
@@ -101,7 +104,6 @@ public class StockService {
             } else {
                 product.setQuantity(product.getQuantity() - dto.quantity());
             }
-
             // Faz a requisição para a API e retorna o preço da crypto moeda na moeda enviada na requisição
             var json = coinMarketCapService.getCurrency(apiKey, dto.currencyCoin(), dto.convertCoin());
 
@@ -135,5 +137,23 @@ public class StockService {
         return new StockResponseDTO(stock.get().getId(), stock.get().getProduct().getId(), stock.get().getUser().getUserId(), stock.get().getQuantity(),
                 stock.get().getMovementType(), stock.get().getCurrencyType(), stock.get().getCurrencyPaid(), stock.get().getPurchasePrice(), stock.get().getMovementDate());
 
+    }
+
+    public StockBalanceDTO getStockBalance() {
+        List<Object[]> results = stockRepository.getBalance();
+
+        // Verifica se a lista não está vazia antes de acessar o primeiro elemento
+        if (!results.isEmpty()) {
+            Object[] data = results.getFirst(); // Obtém o primeiro resultado
+
+            System.out.println("Resultado da Query: " + Arrays.toString(data)); // Debug
+
+            return new StockBalanceDTO(
+                    data[0] != null ? ((Number) data[0]).doubleValue() : 0.0,
+                    data[1] != null ? ((Number) data[1]).doubleValue() : 0.0,
+                    data[2] != null ? ((Number) data[2]).doubleValue() : 0.0
+            );
+        }
+        return null;
     }
 }
