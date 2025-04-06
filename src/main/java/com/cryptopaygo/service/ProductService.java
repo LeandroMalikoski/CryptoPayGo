@@ -27,7 +27,7 @@ public class ProductService {
     }
 
     // Valida os dados da requisição e retorna erros, se houver
-    public void bindingResultMaster(BindingResult bindingResult) {
+    private void bindingResultMaster(BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             String errorMessage = bindingResult.getFieldErrors().stream()
                     .map(DefaultMessageSourceResolvable::getDefaultMessage)

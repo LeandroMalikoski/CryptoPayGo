@@ -15,8 +15,7 @@ public interface StockRepository extends JpaRepository<Stock, Integer> {
             COALESCE(SUM(CASE WHEN movement_type = 'ENTRY' THEN purchase_price ELSE 0 END), 0) AS total_entry,
             COALESCE(SUM(CASE WHEN movement_type = 'EXIT' THEN purchase_price ELSE 0 END), 0) AS total_exit,
             COALESCE(SUM(CASE WHEN movement_type = 'ENTRY' THEN purchase_price ELSE 0 END), 0) 
-            - 
-            COALESCE(SUM(CASE WHEN movement_type = 'EXIT' THEN purchase_price ELSE 0 END), 0) AS balance
+            - COALESCE(SUM(CASE WHEN movement_type = 'EXIT' THEN purchase_price ELSE 0 END), 0) AS balance
         FROM stock
     """, nativeQuery = true)
     List<Object[]> getBalance();

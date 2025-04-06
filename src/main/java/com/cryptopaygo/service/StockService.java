@@ -19,9 +19,7 @@ import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
-
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -44,7 +42,7 @@ public class StockService {
     }
 
     // Valida os dados da requisição e retorna erros, se houver
-    public void bindingResultMaster(BindingResult bindingResult) {
+    private void bindingResultMaster(BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             String errorMessage = bindingResult.getFieldErrors().stream()
                     .map(DefaultMessageSourceResolvable::getDefaultMessage)
@@ -145,8 +143,6 @@ public class StockService {
         // Verifica se a lista não está vazia antes de acessar o primeiro elemento
         if (!results.isEmpty()) {
             Object[] data = results.getFirst(); // Obtém o primeiro resultado
-
-            System.out.println("Resultado da Query: " + Arrays.toString(data)); // Debug
 
             return new StockBalanceDTO(
                     data[0] != null ? ((Number) data[0]).doubleValue() : 0.0,

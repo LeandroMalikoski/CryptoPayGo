@@ -1,6 +1,7 @@
 package com.cryptopaygo.config.filter;
 
 import com.cryptopaygo.config.exception.TokenInvalidException;
+import com.cryptopaygo.config.exception.UserNotFoundException;
 import com.cryptopaygo.config.service.TokenService;
 import com.cryptopaygo.config.service.UserDetailsService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -39,7 +40,7 @@ public class SecurityFilter extends OncePerRequestFilter {
                 var userName = tokenService.validateToken(tokenJwt);
                 var user = userDetailsService.loadUserByUsername(userName);
                 if (user == null) {
-                    throw new RuntimeException("User not found");
+                    throw new UserNotFoundException("User not found");
                 }
 
                 // Cria uma autenticação com o usuário recuperado
