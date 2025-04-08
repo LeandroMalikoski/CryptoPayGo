@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 
 import java.io.IOException;
 
-public class MovementTypeDeserializer extends JsonDeserializer {
+public class MovementTypeDeserializer extends JsonDeserializer<MovementType> {
     @Override
     public MovementType deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
         return MovementType.fromString(p.getValueAsString());

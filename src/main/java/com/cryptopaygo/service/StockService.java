@@ -1,6 +1,7 @@
 package com.cryptopaygo.service;
 
 import com.cryptopaygo.config.entity.User;
+import com.cryptopaygo.config.exception.ProductNotFoundException;
 import com.cryptopaygo.config.exception.RequestInvalidException;
 import com.cryptopaygo.config.repository.UserRepository;
 import com.cryptopaygo.dto.StockBalanceDTO;
@@ -19,6 +20,7 @@ import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -105,6 +107,8 @@ public class StockService {
             // Faz a requisição para a API e retorna o preço da crypto moeda na moeda enviada na requisição
             var json = coinMarketCapService.getCurrency(apiKey, dto.currencyCoin(), dto.convertCoin());
 
+            System.out.println("---------------------------JSON: " + json);
+
             // Calcula a quantidade da crypto moeda usada para a compra
             var currencyPaid = dto.quantity() * (product.getPrice() / json);
 
@@ -151,5 +155,17 @@ public class StockService {
             );
         }
         return null;
+    }
+
+    public void deleteById(Long id) {
+
+        Optional<Stock> stock = stockRepository.findStockById(id);
+
+        if (stock.isPresent()) {
+            stockRepository.delete(stock.get());
+        } else {
+            throw new ProductNotFoundException("Stock not found");
+        }
+
     }
 }

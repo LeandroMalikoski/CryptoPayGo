@@ -1,6 +1,7 @@
 package com.cryptopaygo.controller;
 
 import com.cryptopaygo.config.entity.User;
+import com.cryptopaygo.dto.GeneralResponseDTO;
 import com.cryptopaygo.dto.StockBalanceDTO;
 import com.cryptopaygo.dto.StockMovementDTO;
 import com.cryptopaygo.dto.StockResponseDTO;
@@ -40,6 +41,15 @@ public class StockController {
     public ResponseEntity<StockBalanceDTO> getStockBalance() {
 
         return ResponseEntity.status(HttpStatus.OK).body(stockService.getStockBalance());
+
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<GeneralResponseDTO> deleteStock(@PathVariable Long id) {
+
+        stockService.deleteById(id);
+
+        return ResponseEntity.status(HttpStatus.OK).body(new GeneralResponseDTO("Stock deleted successfully", true));
 
     }
 }
