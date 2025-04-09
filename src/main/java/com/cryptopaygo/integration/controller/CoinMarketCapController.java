@@ -11,13 +11,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("cryptos")
 public class CoinMarketCapController {
 
-    private final CoinMarketCapService coinMarketCapService;
-    private final Environment environment;
-
-    public CoinMarketCapController(CoinMarketCapService coinMarketCapService, Environment environment) {
-        this.coinMarketCapService = coinMarketCapService;
-        this.environment = environment;
-    }
+//    private final CoinMarketCapService coinMarketCapService;
+//    private final Environment environment;
+//
+//    public CoinMarketCapController(CoinMarketCapService coinMarketCapService, Environment environment) {
+//        this.coinMarketCapService = coinMarketCapService;
+//        this.environment = environment;
+//    }
 
     // Função que exige o envio da Chave da API no header do insomnia, postman, etc.
 //    @GetMapping("/cr")
