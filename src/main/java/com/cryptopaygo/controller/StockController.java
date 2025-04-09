@@ -23,7 +23,7 @@ public class StockController {
         this.stockService = stockService;
     }
 
-    @PostMapping("/purchase")
+    @PostMapping("/movement")
     public ResponseEntity<StockResponseDTO> stockMovement(@Valid @RequestBody StockMovementDTO stockMovementDTO, BindingResult bindingResult, @AuthenticationPrincipal User user) {
 
         return ResponseEntity.status(HttpStatus.OK).body(stockService.stockMovement(stockMovementDTO, bindingResult, user));
