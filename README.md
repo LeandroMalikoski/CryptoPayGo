@@ -60,6 +60,26 @@ Crie sua chave API gratuita em: https://coinmarketcap.com/api/
 Após rodar o projeto, acesse:  
 `http://localhost:8080/swagger-ui.html`
 
+Agora você poderá usar um software como Insomnia ou Postman para testar os endpoints, segue exemplos:
+
+Não esqueça de colocar seu token em Auth -> Bearer Token
+
+`http://localhost:8080/users/register`
+
+![Captura de tela 2025-04-08 221508](https://github.com/user-attachments/assets/4ad5f19f-8b93-477e-aa91-2b8844e20faa)
+
+`http://localhost:8080/auth/login`
+
+![Captura de tela 2025-04-08 221535](https://github.com/user-attachments/assets/6282f6bb-e5ae-4990-b35c-bd471cb0d5df)
+
+`http://localhost:8080/product/new`
+
+![Captura de tela 2025-04-08 221615](https://github.com/user-attachments/assets/88498850-8863-474e-8584-6252c9cc3735)
+
+`http://localhost:8080/stock/movement`
+
+![Captura de tela 2025-04-08 221853](https://github.com/user-attachments/assets/c2ee3fe4-3bef-46f3-99c9-7ad6f8f50728)
+
 ---
 
 ## 👨‍💻 Desenvolvedor
