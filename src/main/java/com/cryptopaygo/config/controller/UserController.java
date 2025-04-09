@@ -8,6 +8,7 @@ import com.cryptopaygo.config.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -33,6 +34,7 @@ public class UserController {
 
     // Lista todos os usuários
     @GetMapping("/list")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<List<UserResponseDTO>> getUsers() {
 
         // Retorna todos os usuários cadastrados
@@ -40,6 +42,8 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
+    //@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<UserResponseDTO> getUserDetails(@PathVariable Long id) {
 
         // Busca o usuário pelo ID informado
@@ -49,6 +53,7 @@ public class UserController {
     }
 
     @PatchMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserResponseDTO> updateUserDetails(@PathVariable Long id, @RequestBody @Valid UserUpdateDTO dto, BindingResult bindingResult) {
 
         var user = userService.updateUserDetails(id, dto, bindingResult);
@@ -57,6 +62,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<GeneralResponseDTO> deleteUser(@PathVariable Long id) {
 
         userService.deleteUser(id);
