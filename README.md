@@ -58,7 +58,7 @@ Crie sua chave API gratuita em: https://coinmarketcap.com/api/
 ## 📸 Swagger UI
 
 Após rodar o projeto, acesse:  
-`http://localhost:8080/swagger-ui.html`
+`http://localhost:8080/swagger-ui/index.html`
 
 Agora você poderá usar um software como Insomnia ou Postman para testar os endpoints, segue exemplos:
 
